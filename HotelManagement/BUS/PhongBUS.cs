@@ -55,6 +55,12 @@ namespace HotelManagement.BUS
             this.LoaiPhong = loaiPhong;
         }
 
+        public void setAttributes(int maPhong, string tinhTrang)
+        {
+            this.MaPhong = maPhong;
+            this.TinhTrang = tinhTrang;
+        }
+
         public DataTable getAll()
         {
             return dao.getAll();
@@ -65,9 +71,29 @@ namespace HotelManagement.BUS
             return dao.getAllDateFilter(ngayDen, ngayDi);
         }
 
+        public int getOrderPrice(int maPhong, DateTime ngayDen, DateTime ngayDi)
+        {
+            if (ngayDi > ngayDen)
+            {
+                TimeSpan ts = ngayDi - ngayDen;
+                int numOfDays = (int)ts.TotalDays;
+                int price = dao.getOrderPrice(numOfDays,maPhong);
+                return price;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
         public bool updatePhong()
         {
             return dao.updatePhong(this);
+        }
+
+        public bool updateTinhTrang()
+        {
+            return dao.updateTinhTrang(this);
         }
     }
 }

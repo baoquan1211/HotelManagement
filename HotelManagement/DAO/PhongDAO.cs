@@ -77,5 +77,43 @@ namespace HotelManagement.DAO
                 return false;
             }
         }
+
+        public int getOrderPrice(int numOfDay, int maPhong)
+        {
+            if (this.conn.State == ConnectionState.Closed)
+                conn.Open();
+
+            MySqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT DonGia FROM PHONG, LOAIPHONG WHERE PHONG.LoaiPhong = LOAIPHONG.MaLoai AND PHONG.MaPhong = "+ maPhong;
+            cmd.CommandType = CommandType.Text;
+            Int32 reader = (Int32)cmd.ExecuteScalar() ;
+            cmd.Cancel();
+            conn.Close();
+
+            return (int)((int)reader * numOfDay * 0.3);
+        }
+
+        public bool updateTinhTrang(PhongBUS bus)
+        {
+            if (conn.State == ConnectionState.Closed)
+                conn.Open();
+            MySqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE PHONG SET TinhTrang = '" + bus.getTinhTrang() + "' WHERE MaPhong = " + bus.getMaPhong() + "";
+            try
+            {
+                if (cmd.ExecuteNonQuery() != 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    throw (new Exception());
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

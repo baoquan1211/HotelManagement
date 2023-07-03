@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BUS\DichVuPhongBUS.cs" />
     <Compile Include="BUS\DoanKhachBUS.cs" />
     <Compile Include="BUS\HoaDonDatPhongBUS.cs" />
     <Compile Include="BUS\KhachHangBUS.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="BUS\PhieuDatPhongBUS.cs" />
     <Compile Include="BUS\PhongBUS.cs" />
     <Compile Include="BUS\UserBUS.cs" />
+    <Compile Include="DAO\DichVuPhongDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />
     <Compile Include="DAO\DoanKhachDAO.cs" />
     <Compile Include="DAO\HoaDonDatPhongDAO.cs" />

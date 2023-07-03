@@ -22,6 +22,8 @@ namespace HotelManagement.GUI
         PhongBUS phongServices;
         LoaiPhongBUS loaiPhongServices;
         KhachHangBUS khachHangServices;
+        PhieuDatPhongBUS phieuDatPhongServices;
+        DichVuPhongBUS dichVuPhongServices;
         private DataGridViewRow row = new DataGridViewRow();
         public HotelManagementGUI(MySqlConnection conn, int maNV)
         {
@@ -34,8 +36,11 @@ namespace HotelManagement.GUI
             phongServices = new PhongBUS(conn);
             loaiPhongServices = new LoaiPhongBUS(conn);
             khachHangServices = new KhachHangBUS(conn);
+            phieuDatPhongServices = new PhieuDatPhongBUS(conn);
+            dichVuPhongServices = new DichVuPhongBUS(conn);
             loadDSPhong();
             loadDSKhachHang();
+            loadDSPhieuDatPhong();
         }
 
         void loadDSPhong()
@@ -55,6 +60,10 @@ namespace HotelManagement.GUI
             dgvKhachHang1.DataSource = khachHangServices.getAll();
         }
 
+        void loadDSPhieuDatPhong()
+        {
+            dgvPhieuDatPhong.DataSource = phieuDatPhongServices.getAll();
+        }
         private void btnUpdatePhong_Click(object sender, EventArgs e)
         {
             phongServices.setAttributes(Convert.ToInt32(txtMaPhong.Text), txtTinhTrang.Text, Convert.ToInt32(txtLoaiPhong.Text));
@@ -123,8 +132,16 @@ namespace HotelManagement.GUI
 
         private void btnLocPhong_Click(object sender, EventArgs e)
         {
-            DataTable dt = phongServices.getAllDateFilter(dtpNgayDen.Value.Date, dtpNgayTraPhong.Value.Date);
-            dgvFilterPhong.DataSource = dt;
+            if (dtpNgayTraPhong.Value.Date > dtpNgayDen.Value.Date)
+            {
+                DataTable dt = phongServices.getAllDateFilter(dtpNgayDen.Value.Date, dtpNgayTraPhong.Value.Date);
+                dgvFilterPhong.DataSource = dt;
+            }
+            else
+            {
+                MessageBox.Show("Ngày trả phòng phải sau ngày đến");
+            }
+            
         }
 
         private void dgvKhachHang1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -136,7 +153,104 @@ namespace HotelManagement.GUI
         private void dgvFilterPhong_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dgvFilterPhong.CurrentRow.Selected = true;
-            txtMaPhongDatPhong.Text = dgvFilterPhong.Rows[e.RowIndex].Cells[0].Value.ToString(); ;
+            txtMaPhongDatPhong.Text = dgvFilterPhong.Rows[e.RowIndex].Cells[0].Value.ToString();
+            int maPhong = Convert.ToInt32(txtMaPhongDatPhong.Text);
+            txtTienCoc.Text = phongServices.getOrderPrice(maPhong, dtpNgayDen.Value.Date, dtpNgayTraPhong.Value.Date).ToString();
+        }
+
+        private void btnDatPhong_Click(object sender, EventArgs e)
+        {
+            if (dtpNgayTraPhong.Value.Date > dtpNgayDen.Value.Date)
+            {
+                phieuDatPhongServices.setAttributes("Đang đặt", dtpNgayDen.Value.Date, dtpNgayTraPhong.Value.Date, Convert.ToInt32(txtMaPhongDatPhong.Text), txtYeuCauDacBiet.Text, Convert.ToInt32(txtMaKHDatPhong.Text), Convert.ToInt32(maNV));
+                if (phieuDatPhongServices.insertPhieuDatPhong() == true)
+                {
+                    MessageBox.Show("Đặt phòng thành công");
+                    phongServices.setAttributes(Convert.ToInt32(txtMaPhongDatPhong.Text), "Đã đặt");
+                    phongServices.updateTinhTrang();
+                    loadDSPhong();
+                }
+                else
+                {
+                    MessageBox.Show("Đặt phòng không thành công");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ngày trả phòng phải sau ngày đến ít nhất một ngày");
+            }
+        }
+
+        private void btnTimPhieu_Click(object sender, EventArgs e)
+        {
+            if (txtTenKHCheckin.Text != "" || txtSDTKHCheckin.Text != "")
+            {
+                if(txtSDTKHCheckin.Text != "")
+                {
+                    dgvPhieuDatPhong.DataSource = phieuDatPhongServices.getBySDT(txtSDTKHCheckin.Text);
+                }
+                else
+                {
+                    dgvPhieuDatPhong.DataSource = phieuDatPhongServices.getByName(txtTenKHCheckin.Text);
+                }
+            }
+            else
+            {
+                loadDSPhieuDatPhong();
+            }
+        }
+
+        private void dgvPhieuDatPhong_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dgvPhieuDatPhong.CurrentRow.Selected = true;
+            txtMaPhieu.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[0].Value.ToString();
+            txtMaPhongCheckIn.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[5].Value.ToString();
+            txtYeuCauDacBiet.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[6].Value.ToString();
+            dgvDichVuPhong.DataSource = dichVuPhongServices.getByMaPhong(Convert.ToInt32(txtMaPhongCheckIn.Text));
+        }
+
+        private void btnUpdateYeuCauDacBiet_Click(object sender, EventArgs e)
+        {
+            if (txtYeuCauDBCheckIn.Text != "" && txtMaPhieu.Text != "") 
+            {
+                if (phieuDatPhongServices.updateYeuCauPhieuDatPhong(Convert.ToInt32(txtMaPhieu.Text), txtYeuCauDBCheckIn.Text) == true)
+                {
+                    MessageBox.Show("Cập nhật yêu cầu đặc biệt thành công");
+                    loadDSPhieuDatPhong();
+
+                }
+                else
+                {
+                    MessageBox.Show("Cập nhật yêu cầu đặc biệt thất bại");
+                }
+                loadDSKhachHang();
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng điền phiếu yêu cầu và chọn phiếu cần cập nhật");
+            }
+        }
+
+        private void btnCheckIn_Click(object sender, EventArgs e)
+        {
+            if (txtMaPhieu.Text != "")
+            {
+                if (phieuDatPhongServices.updateTrangThai(Convert.ToInt32(txtMaPhieu.Text), "Đang sử dụng") == true)
+                {
+                    MessageBox.Show("Check in thành công");
+                    loadDSPhieuDatPhong();
+
+                }
+                else
+                {
+                    MessageBox.Show("Check in thất bại");
+                }
+                loadDSKhachHang();
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn phiếu check in");
+            }
         }
     }
 }
