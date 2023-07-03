@@ -16,7 +16,7 @@ using Org.BouncyCastle.Utilities;
 
 namespace HotelManagement.GUI
 {
-    public partial class HotelManagementGUI: MaterialSkin.Controls.MaterialForm
+    public partial class HotelManagementGUI : MaterialSkin.Controls.MaterialForm
     {
         int maNV;
         PhongBUS phongServices;
@@ -46,7 +46,8 @@ namespace HotelManagement.GUI
         void loadDSPhong()
         {
             dgvPhong.DataSource = phongServices.getAll();
-            if (dgvPhong.Rows.Count > 1) {
+            if (dgvPhong.Rows.Count > 1)
+            {
                 for (int i = 0; i < dgvPhong.Rows.Count - 1; i++)
                 {
                     txtMaPhong.Items.Add(dgvPhong.Rows[i].Cells[0].Value);
@@ -81,23 +82,31 @@ namespace HotelManagement.GUI
         private void dgvPhong_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dgvPhong.CurrentRow.Selected = true;
-            row = dgvPhong.Rows[e.RowIndex];
-            txtMaPhong.Text = row.Cells["Mã phòng"].Value.ToString(); ;
-            txtTinhTrang.Text = row.Cells["Tình trạng"].Value.ToString();
-            txtLoaiPhong.Text = row.Cells["Loại phòng"].Value.ToString();
+            if (e.RowIndex >= 0)
+            {
+                row = dgvPhong.Rows[e.RowIndex];
+                txtMaPhong.Text = row.Cells["Mã phòng"].Value.ToString(); ;
+                txtTinhTrang.Text = row.Cells["Tình trạng"].Value.ToString();
+                txtLoaiPhong.Text = row.Cells["Loại phòng"].Value.ToString();
+
+            }
         }
 
         private void dgvKhachHang_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dgvKhachHang.CurrentRow.Selected = true;
-            txtMaKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[0].Value.ToString(); ;
-            txtHoTenKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[1].Value.ToString();
-            txtEmailKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[2].Value.ToString();
-            txtCMNDKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[3].Value.ToString();
-            txtGioiTinhKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[4].Value.ToString();
-            txtDiaChiKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[5].Value.ToString();
-            txtSDTKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[6].Value.ToString();
-            txtDoanKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[7].Value.ToString();
+            if (e.RowIndex >= 0)
+            {
+                txtMaKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[0].Value.ToString(); ;
+                txtHoTenKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[1].Value.ToString();
+                txtEmailKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[2].Value.ToString();
+                txtCMNDKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[3].Value.ToString();
+                txtGioiTinhKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[4].Value.ToString();
+                txtDiaChiKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[5].Value.ToString();
+                txtSDTKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[6].Value.ToString();
+                txtDoanKH.Text = dgvKhachHang.Rows[e.RowIndex].Cells[7].Value.ToString();
+            }
+
         }
 
         private void btnThemKhachHang_Click(object sender, EventArgs e)
@@ -141,21 +150,26 @@ namespace HotelManagement.GUI
             {
                 MessageBox.Show("Ngày trả phòng phải sau ngày đến");
             }
-            
+
         }
 
         private void dgvKhachHang1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dgvKhachHang1.CurrentRow.Selected = true;
-            txtMaKHDatPhong.Text = dgvKhachHang1.Rows[e.RowIndex].Cells[0].Value.ToString();
+            if (e.RowIndex >= 0)
+                txtMaKHDatPhong.Text = dgvKhachHang1.Rows[e.RowIndex].Cells[0].Value.ToString();
         }
 
         private void dgvFilterPhong_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dgvFilterPhong.CurrentRow.Selected = true;
-            txtMaPhongDatPhong.Text = dgvFilterPhong.Rows[e.RowIndex].Cells[0].Value.ToString();
-            int maPhong = Convert.ToInt32(txtMaPhongDatPhong.Text);
-            txtTienCoc.Text = phongServices.getOrderPrice(maPhong, dtpNgayDen.Value.Date, dtpNgayTraPhong.Value.Date).ToString();
+            if (e.RowIndex >= 0)
+            {
+                txtMaPhongDatPhong.Text = dgvFilterPhong.Rows[e.RowIndex].Cells[0].Value.ToString();
+                int maPhong = Convert.ToInt32(txtMaPhongDatPhong.Text);
+                txtTienCoc.Text = phongServices.getOrderPrice(maPhong, dtpNgayDen.Value.Date, dtpNgayTraPhong.Value.Date).ToString();
+
+            }
         }
 
         private void btnDatPhong_Click(object sender, EventArgs e)
@@ -185,7 +199,7 @@ namespace HotelManagement.GUI
         {
             if (txtTenKHCheckin.Text != "" || txtSDTKHCheckin.Text != "")
             {
-                if(txtSDTKHCheckin.Text != "")
+                if (txtSDTKHCheckin.Text != "")
                 {
                     dgvPhieuDatPhong.DataSource = phieuDatPhongServices.getBySDT(txtSDTKHCheckin.Text);
                 }
@@ -203,15 +217,18 @@ namespace HotelManagement.GUI
         private void dgvPhieuDatPhong_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dgvPhieuDatPhong.CurrentRow.Selected = true;
-            txtMaPhieu.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[0].Value.ToString();
-            txtMaPhongCheckIn.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[5].Value.ToString();
-            txtYeuCauDacBiet.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[6].Value.ToString();
-            dgvDichVuPhong.DataSource = dichVuPhongServices.getByMaPhong(Convert.ToInt32(txtMaPhongCheckIn.Text));
+            if (e.RowIndex >= 0)
+            {
+                txtMaPhieu.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[0].Value.ToString();
+                txtMaPhongCheckIn.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[5].Value.ToString();
+                txtYeuCauDBCheckIn.Text = dgvPhieuDatPhong.Rows[e.RowIndex].Cells[6].Value.ToString();
+                dgvDichVuPhong.DataSource = dichVuPhongServices.getByMaPhong(Convert.ToInt32(txtMaPhongCheckIn.Text));
+            }
         }
 
         private void btnUpdateYeuCauDacBiet_Click(object sender, EventArgs e)
         {
-            if (txtYeuCauDBCheckIn.Text != "" && txtMaPhieu.Text != "") 
+            if (txtYeuCauDBCheckIn.Text != "" && txtMaPhieu.Text != "")
             {
                 if (phieuDatPhongServices.updateYeuCauPhieuDatPhong(Convert.ToInt32(txtMaPhieu.Text), txtYeuCauDBCheckIn.Text) == true)
                 {
