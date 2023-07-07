@@ -50,7 +50,11 @@ namespace HotelManagement.GUI
             {
                 for (int i = 0; i < dgvPhong.Rows.Count - 1; i++)
                 {
-                    txtMaPhong.Items.Add(dgvPhong.Rows[i].Cells[0].Value);
+                    if (!txtMaPhong.Items.Contains(dgvPhong.Rows[i].Cells[0].Value))
+                    { 
+                        txtMaPhong.Items.Add(dgvPhong.Rows[i].Cells[0].Value); 
+                    }
+                        
                 }
             }
         }
@@ -183,6 +187,7 @@ namespace HotelManagement.GUI
                     phongServices.setAttributes(Convert.ToInt32(txtMaPhongDatPhong.Text), "Đã đặt");
                     phongServices.updateTinhTrang();
                     loadDSPhong();
+                    loadDSPhieuDatPhong();
                 }
                 else
                 {
